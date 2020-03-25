@@ -1,0 +1,70 @@
+---
+layout: page
+title: Espify Spotify Auth
+nav-menu: false
+permalink: /espify/auth_token
+---
+
+<!-- Main -->
+<div id="main" class="alt">
+    <!-- One -->
+    <section id="one">
+        <div class="inner">
+            <div id="refresh_form">
+                <input type="text" id="client_id" name="client_id">
+                <input type="text" id="client_secret" name="client_secret">
+                <button class="actions fit" onclick="send_post()">Get Refresh Token</button>
+            </div>
+            <div id="refresh_block" style="display:none">
+                Great, the refresh token was received successfully!
+                <br>
+                You can now paste the following into the file
+                <pre><code id="auth_file"></code>
+                <a id=dl download="config.h">Download as File</a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    function send_post() {
+        document.getElementById("refresh_form").style.display = "none";
+
+        var query = document.location.search.split("+").join(" ");
+        var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(query)) {
+            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+        }
+
+        var client_id = document.getElementById('client_id').value;
+        var client_secret = document.getElementById('client_secret').value
+
+        var req = new XMLHttpRequest();
+        req.open("POST", "https://accounts.spotify.com/api/token", true);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        req.send(`client_id=${client_id}&client_secret=${client_secret}&code=${params.code}&grant_type=authorization_code&redirect_uri=https://2258studio.com/espify/auth_token`)
+
+        req.onreadystatechange = (e) => {
+            document.getElementById("refresh_block").style.display = "block";
+
+            var json = JSON.parse(req.responseText);
+
+            console.table(json);
+
+            var config_str = `#define CLIENT_ID "${client_id}"
+#define CLIENT_SECRET "${client_secret}"
+#define REFRESH_TOKEN "${json["refresh_token"]}"
+
+// Fill in your homes wifi ssid (name) and password
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+`;
+
+            document.getElementById("auth_file").innerHTML = config_str;
+
+            dl.href = "data:text/plain," + encodeURIComponent(config_str);
+            //dl.click();
+        }
+    };
+</script>

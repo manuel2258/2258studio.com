@@ -1,0 +1,69 @@
+---
+layout: page
+title: Projects
+description: An overview of all my current Projects
+nav-menu: true
+---
+
+<!-- Main -->
+<div id="main" class="alt">
+
+	<!-- One -->
+	<section id="one">
+		<div class="inner">
+			<header class="major">
+				<h1>Projects</h1>
+			</header>
+
+			<h2>Espify</h2>
+			<p><span class="image left"><img src="{% link assets/images/espify_clean.JPG %}" alt="Espify" /></span>
+				<h4>A small device to control the playback of a Spotify player.</h4>
+				The Espify based on the ESP32-WROOM module and developed using the ESP-IDF SDK and C++. It basically
+				acts as an additional keyboard that directly communicates with the Spotify API to remotely modify and
+				display the currently played track.
+				<h4>Features:</h4>
+				<li>Change and pause the currently played track</li>
+				<li>Change the players volume</li>
+				<li>Displays title, artist and image of currently player track</li>
+				<li>100% OpenSource and easy to build</li>
+			</p>
+			<ul class="actions fit">
+				<li><a href="/espify" class="button special fit">How to build</a></li>
+				<li><a href="https://github.com/manuel2258/espify" class="button special fit">Source Code</a></li>
+			</ul>
+
+			<h2>Timed</h2>
+			<p><span class="image right"><img src="{% link assets/images/timed.webp %}" alt="" /></span>
+				<h4>A puzzle mobile Game</h4>
+				Timed is a physic based puzzle Android Game which is written in C# using the Unity Engine. Using the
+				time itself as its main attraction, the games goal is to create a path for objects to reach their goal.
+				That is done by define events at the right point in time to active elements which then interact with
+				said objects. Although the projects is dead, it still is in a finished state and fun to play, so check
+				it out. It again is OpenSource although I don't think that every file is included so it might not be
+				buildable.
+			</p>
+			<ul class="actions fit">
+				<li><a href="https://play.google.com/store/apps/details?id=com.two258studio.timed"
+						class="button special fit">Google Playstore</a></li>
+				<li><a href="https://github.com/manuel2258/timed" class="button special fit">Source Code</a></li>
+			</ul>
+
+			<h2>Lighthub</h2>
+			<p><span class="image left"><img src="{% link assets/images/lighthub.JPG %}" alt="" /></span>
+				<h4>A time controlled bottlelamp</h4>
+				The Lighthub is a socket, which illuminates a bottle places on it. Times at which it should be
+				activated, as well as its color can be configured over an Android-App, which directly communicates with
+				the lighthub. The bottle size is dynamic so you can place your favorite Gin or Whiskey bottle on it and
+				have let it brighten your room. It's written in Micropython and is made from an ESP8266 as well as a
+				simple LED-Ring. Again 100% OpenSource and easy to build.
+			</p>
+			<ul class="actions fit">
+				<li><a href="https://www.thingiverse.com/thing:3866419" class="button special fit">Thingiverse</a></li>
+				<li><a href="https://github.com/manuel2258/lighthub_server" class="button special fit">Source Code -
+						ESP8266</a></li>
+				<li><a href="https://github.com/manuel2258/lighthub_client" class="button special fit">Source Code -
+						Android</a></li>
+			</ul>
+		</div>
+	</section>
+</div>

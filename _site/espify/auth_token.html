@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!--
+	Forty by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Espify Spotify Auth | 2258Studio</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<!--[if lte IE 8]><script src="/assets/js/ie/html5shiv.js"></script><![endif]-->
+	<link rel="stylesheet" href="/assets/css/main.css" />
+	<!--[if lte IE 9]><link rel="stylesheet" href="/assets/css/ie9.css" /><![endif]-->
+	<!--[if lte IE 8]><link rel="stylesheet" href="/assets/css/ie8.css" /><![endif]-->
+</head>
+
+
+<body>
+
+    <!-- Wrapper -->
+<div id="wrapper">
+
+<!-- Header -->
+<header id="header">
+	<a href="http://localhost:4000//" class="logo"><strong>2258Studio</strong> <span>by Manuel Schmidbauer</span></a>
+	<nav>
+		<a href="#menu">Menu</a>
+	</nav>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+	<ul class="links">
+        
+		    
+		
+		    
+		
+		    
+		
+		    
+		
+		    
+		        <li><a href="http://localhost:4000//">Home</a></li>
+	    	
+		
+		    
+		
+		    
+		
+		
+		    
+		
+		    
+		        <li><a href="http://localhost:4000/all_posts.html">All posts</a></li>
+		    
+		
+		    
+		        <li><a href="http://localhost:4000/espify.html">Espify</a></li>
+		    
+		
+		    
+		
+		    
+		
+		    
+		        <li><a href="http://localhost:4000/projects.html">Projects</a></li>
+		    
+		
+	</ul>
+	<ul class="actions vertical">
+		<li><a href="#" class="button special fit">Get Started</a></li>
+		<li><a href="#" class="button fit">Log In</a></li>
+	</ul>
+</nav>
+ <!-- Main -->
+<div id="main" class="alt">
+    <!-- One -->
+    <section id="one">
+        <div class="inner">
+            <div id="refresh_form">
+                <input type="text" id="client_id" name="client_id">
+                <input type="text" id="client_secret" name="client_secret">
+                <button class="actions fit" onclick="send_post()">Get Refresh Token</button>
+            </div>
+            <div id="refresh_block" style="display:none">
+                Great, the refresh token was received successfully!
+                <br>
+                You can now paste the following into the file
+                <pre><code id="auth_file"></code>
+                <a id=dl download="config.h">Download as File</a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    function send_post() {
+        document.getElementById("refresh_form").style.display = "none";
+
+        var query = document.location.search.split("+").join(" ");
+        var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(query)) {
+            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+        }
+
+        var client_id = document.getElementById('client_id').value;
+        var client_secret = document.getElementById('client_secret').value
+
+        var req = new XMLHttpRequest();
+        req.open("POST", "https://accounts.spotify.com/api/token", true);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        req.send(`client_id=${client_id}&client_secret=${client_secret}&code=${params.code}&grant_type=authorization_code&redirect_uri=https://2258studio.com/espify/auth_token`)
+
+        req.onreadystatechange = (e) => {
+            document.getElementById("refresh_block").style.display = "block";
+
+            var json = JSON.parse(req.responseText);
+
+            console.table(json);
+
+            var config_str = `#define CLIENT_ID "${client_id}"
+#define CLIENT_SECRET "${client_secret}"
+#define REFRESH_TOKEN "${json["refresh_token"]}"
+
+// Fill in your homes wifi ssid (name) and password
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+`;
+
+            document.getElementById("auth_file").innerHTML = config_str;
+
+            dl.href = "data:text/plain," + encodeURIComponent(config_str);
+            //dl.click();
+        }
+    };
+</script> <!-- Footer -->
+<footer id="footer">
+	<div class="inner">
+		<ul class="icons">
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+		<ul class="copyright">
+			<li>&copy; 2258Studio by Manuel Schmidbauer</li>
+			<li>Design: <a href="https://html5up.net" target="_blank">HTML5 UP</a></li>
+			<li>Jekyll integration: <a href="http://andrewbanchi.ch" target="_blank">Andrew Banchich</a></li>
+
+		</ul>
+	</div>
+</footer>
+
+</div>
+
+<!-- Scripts -->
+<script src="http://localhost:4000/assets/js/jquery.min.js"></script>
+<script src="http://localhost:4000/assets/js/jquery.scrolly.min.js"></script>
+<script src="http://localhost:4000/assets/js/jquery.scrollex.min.js"></script>
+<script src="http://localhost:4000/assets/js/skel.min.js"></script>
+<script src="http://localhost:4000/assets/js/util.js"></script>
+<!--[if lte IE 8]><script src="http://localhost:4000/assets/js/ie/respond.min.js"></script><![endif]-->
+<script src="http://localhost:4000/assets/js/main.js"></script>
+
+</body>
+
+</html>

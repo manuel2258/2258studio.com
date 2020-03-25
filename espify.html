@@ -1,0 +1,210 @@
+---
+layout: page
+title: Espify
+description: A small device to control the playback of a Spotify player
+nav-menu: true
+image: /assets/images/espify_hex.png
+---
+
+<!-- Main -->
+<div id="main" class="alt">
+
+    <!-- One -->
+    <section id="one">
+        <div class="inner">
+            <header class="major">
+                <h1>Espify</h1>
+            </header>
+            <h2>Description</h2>
+            <p><span class="image left"><img src="{% link assets/images/espify_clean.JPG %}" alt="Espify" /></span>
+                <h4>A small device to control the playback of a Spotify player.</h4>
+                The Espify based on the ESP32-WROOM32 module and developed using the ESP-IDF SDK and C++. It basically
+                acts as an additional keyboard that directly communicates with the Spotify API to remotely modify and
+                display the currently played track.
+                <h4>Features:</h4>
+                <li>Change and pause the currently played track</li>
+                <li>Change the players volume</li>
+                <li>Displays title, artist and image of currently player track</li>
+                <li>100% OpenSource and easy to build</li>
+            </p>
+            <h2>How to build</h2>
+            <p>
+                Alright, so you want to build your own Espify? Great because I'm going to show you how you can do that!
+                <br>
+                If you encounter any problems or need help otherwise, just contact me or write a git Issue.
+                <h3>Hardware:</h3>
+                You will need a few components, I will simply link the ones I bought from Ebay, but you can just buy
+                them where you prefer.
+                <ul>
+                    <li>
+                        <a target="_blank" rel="noopener noreferrer"
+                            href="https://www.ebay.com/itm/Espressif-ESP32-WLAN-Dev-Kit-Board-Development-Bluetooth-Wifi-v1-WROOM32-NodeMCU/253059783728?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649">
+                            Espressif ESP-WROOM32
+                        </a>
+                        ~9€
+                    </li>
+                    <li>
+                        <a target="_blank" rel="noopener noreferrer"
+                            href="https://www.ebay.com/itm/1-8-Zoll-TFT-LCD-Display-Modul-128x160-SPI-SD-ST7735-Arduino-Raspberry-Pi/252797557284?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649">
+                            TFT-LCD-Display 128x160
+                        </a>
+                        ~8.50€
+                    </li>
+                    <li>
+                        <a target="_blank" rel="noopener noreferrer"
+                            href="https://www.ebay.com/itm/Gateron-Switch-5-Pin-Schalter-mechanisch-Tastatur-mechanical-keyboard-switches/183525222686?ssPageName=STRK%3AMEBIDX%3AIT&var=690872833437&_trksid=p2060353.m2749.l2649">
+                            Gateron Keyboard Switches
+                        </a>
+                        ~10€ (Others might work as well, however the 3D-Models where designed for Gaterons)
+                    </li>
+                    <li>
+                        2 USB-Cables, 1 for flashing that can still be used afterwards and 1 as powersource
+                    </li>
+                </ul>
+                Additionally will need things like a soldering iron, some cables and several M3 screws/nuts. Also some
+                way of 3D-printing would be needed for the enclosure. If you are living in Germany and don't have a
+                3D-Printer then I can print it and ship it to you.
+                <h3>Software:</h3>
+                Watch out, the following paragraph is written for Linux users, therefor it might be a bit different for
+                Windows or Mac users, but it should still work.
+                <h4>ESP-IDF Setup:</h4>
+                First you will have to setup the ESP-IDF toolchain, as its developer already have a good guide on their
+                page I will simply refer to them. Do step 1-4, afterwards you should have a working build system.
+                <br>
+                <a target="_blank" rel="noopener noreferrer"
+                    href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html">
+                    Get Started ESP32
+                </a>
+                <br>
+                Make sure that you have set the $IDF_PATH variable and executed the export.sh. On my machine that does
+                look something like that:
+                <pre><code>export IDF_PATH=~/SDKs/esp-idf/
+. ~/SDKs/esp-idf/export.sh</code></pre>
+                After which the following should work. The version might vary a bit of course.
+                <pre><code>idf.py --version
+ESP-IDF v4.2-dev-792-g6330b3345</code></pre>
+                <h4>Project Setup:</h4>
+                We will now clone the Espify's code onto your machine.
+                <pre><code>cd ~/path/to/parent
+git clone https://github.com/manuel2258/espify.git
+cd espify</code></pre>
+                The current folder should look something like this: <br>
+                <code>3d  CMakeLists.txt  components  icons_src.svg  main  Makefile  partitions.csv  sdkconfig  spiffs_image</code><br>
+                A quick rundown of the folders/files:<br>
+                <ul>
+                    <li>main: Source code</li>
+                    <li>components: External dependencies</li>
+                    <li>sdkconfig: ESP configurations, can be changed with "idf.py menuconfig"</li>
+                    <li>spiffs_image: To include images and fonts</li>
+                    <li>3d: Contains all printable 3d-Models and their OpenScad source</li>
+                </ul>
+                <h5>Spotify Authentication:</h5>
+                In order to get access to the Spotify API we have to obtain some authentication keys. Therefor you will
+                have to create a project on their website.
+                <br>
+                <a target="_blank" rel="noopener noreferrer"
+                    href="https://developer.spotify.com/dashboard/applications">
+                    Spotify Dashboard
+                </a>
+                <br>
+                Click on "CREATE A CLIENT ID", then just write any name and description, toggle "I don't know" and press
+                "NEXT". <br>
+                Afterwards click on your new project and click on "EDIT SETTINGS". Find "Redirect URIs", paste in:
+                <pre><code>https://2258studio.com/espify/auth_token</code></pre>
+                Finally press "ADD". Click on "SAVE" and copy
+                your Client ID which you will then have to paste into the form bellow. After clicking on the button you
+                will be redirected to the Spotify website. Log in and click on authorize. Then you will be redirected
+                onto my side again, paste there your client id + secret and it will automatically generate a config file
+                for you, download it. Don't worry I wont steal the secret, but simply make a request to get the refresh
+                token from spotify.
+                <br><br>
+                <form accept-charset="UTF-8" target="_blank" rel="noopener noreferrer"
+                    action="https://accounts.spotify.com/authorize" method="GET">
+                    <input type="text" name="client_id" placeholder="Client ID">
+                    <input type="hidden" name="response_type" value="code" />
+                    <input type="hidden" name="redirect_uri" value="https://2258studio.com/espify/auth_token" />
+                    <input type="hidden" name="scope" value="user-modify-playback-state%20user-read-playback-state" />
+                    <button class="actions fit" type="submit">Get Auth Token</button>
+                </form>
+                If you don't like that you have to paste the client's secret into my side you can also make the requests
+                manually. How to do that is described on the spotify side. You can use the config_temp.h file paste in
+                the required fields and then rename it to config.h.<br>
+                The downloaded config.h has to be copied into the projects main folder, therefor afterwards the main
+                folder should look something like this:<br>
+                <code>CMakeLists.txt  component.mk  config.h  config_temp.h  Kconfig.projbuild  main.cpp  server_root_cert.pem  src</code><br>
+                <h5>Create and flash Spiffs Image:</h5>
+                Spiffs is a sort of internal file manager, that the Espify uses for images and fonts. We have to
+                generate a images from the to include files and then flash it.<br>
+                For that we have to use the spiffsgen.py tool which is located at
+                $IDF_PATH/components/spiffs/spiffsgen.py, in which IDF_PATH of course is where the esp-idf sdk is
+                installed. Simply go into the espify's root folder and execute the bellow command. <br>
+                <pre><code>$IDF_PATH/components/spiffs/spiffsgen.py 0x20000 ./spiffs_image storage.bin</code></pre>
+                That should generate a new file named storage.bin in the root folder. Now we only have to flash that
+                file. For that we will use esptool.py. Of course the esp should be connected to your PC over USB for the
+                following to work. Also make sure to replace /dev/ttyUSB0 with the needed port of your machine.
+                <pre><code>esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash 0x17e360 storage.bin</code></pre>
+                <h5>Build and flash main-app:</h5>
+                Alright now we have to compile and flash the project, but at first we will have to edit the previously
+                downloaded config.h file to also store the wifi credentials. Simply open main/config.h and fill in your
+                homes wifi ssid and password to which the espify should connect. Again those won't be shared in anyway
+                but you can verify that for yourself. Afterwards config.h should look something like that:
+                <pre><code>#define CLIENT_ID "XXXXXXXXXXXXXX"
+#define CLIENT_SECRET "XXXXXXXXXXXXXX"
+#define REFRESH_TOKEN "XXXXXXXXXXXXXX"
+                    
+// Fill in your homes wifi ssid (name) and password
+#define WIFI_SSID "TP-LINK_2.4GHz_B1FADE"
+#define WIFI_PASSWORD "XXXXXXXXXXXXXX"</code></pre>
+                Great, we can now build the project, for that type
+                <pre><code>idf.py -p /dev/ttyUSB0 flash monitor</code></pre>
+                which will build, flash and afterwards attach the monitor so that we can verify that everything works.
+                When the Espify starts it will initialize the not yet conntected hardware, then connect to the wifi and
+                request an accesstoken from spotify.
+                Here is the output that you are looking for:
+                <pre><code>I (4798) HttpsRequester: Connected to: TP-LINK_2.4GHz_B1FADE
+I (4822) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (6121) esp_netif_handlers: sta ip: 192.168.1.104, mask: 255.255.255.0, gw: 192.168.1.1
+I (6122) HttpsRequester: got ip:192.168.1.104
+I (6135) HttpsRequester: Connecting to: https://accounts.spotify.com/api/token
+I (6768) HttpsRequester: 442 bytes written
+I (6816) HttpsRequester: connection closed
+I (6817) HttpsRequester: Received 763 bytes
+I (6825) HttpsRequester: Collecting callbacks
+I (6827) HttpsRequester: Added new request to queue
+I (6827) HttpsRequester: Added new request to queue
+I (6831) SpotifyManager: Access token received successfully: XXXXXXXXXXXXXXXXXXXXx</code></pre>
+                If it outputs the line "Access token received successfully" then everything is working and you are good
+                to continue. Also if you are currently listening to music over spotify, it should also already fetch the
+                currently running track, for example in my case:
+                <pre><code>I (7583) SpotifyManager: Updated local player, new Track: Eminence->Children of the Night</code></pre>
+                <h3>Wiring:</h3>
+                That part should be rather easy, the espify has a default pin layout, however it can be changed. To
+                change the buttons pin change the macros in the main/main.cpp. They are in the lines 22-28 and should be
+                self explaining. To change the display pins you will have to open the esp-configs using
+                <code>idf.py menuconfig</code> and then navigate to <code>Component config->TFT Display</code>. There
+                you can change all settings regarding the display. Also if your display is using another chip, it might
+                just works as well. I don't recommend using another display resolution as you would then have to change
+                the graphics objects. If you however want to do that, make sure to contact me so that I can explain the
+                code and help you. <br>
+                Still here is a small wiring schematic:
+                <br><br>
+                <img src="{% link assets/images/espify/schematic.png %}" alt="Espify"
+                    style="display: block; margin-left: auto; margin-right: auto; width: 70%;" />
+                <br>
+                A few things to note here:
+                <ul>
+                    <li>
+                        Make a big joint for 5V and GND.
+                    </li>
+                    <li>
+                        Mount the key switches before soldering.
+                    </li>
+                    <li>
+                        My display can be driven with 3.3V and 5V, make sure yours work with 3.3V as well. You can also
+                        connect the displays VCC to 5V.
+                    </li>
+                </ul>
+                Well how to assemble the case should be rather obvious, so I won't point that out here. I hope my
+                explanation was clear enough, if not again please reach out to me.<br>
+                Well anyways thank you for reading and have fun with your Espify!
+            </p>
