@@ -8,6 +8,8 @@ pipeline {
         stage('build site') {
             steps {
                 checkout scm
+                sh 'bundle update'
+                sh 'bundle install'
                 sh 'bundle exec jekyll build'
             }
         }
