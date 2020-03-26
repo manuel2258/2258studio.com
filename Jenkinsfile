@@ -3,20 +3,27 @@ pipeline {
         registry = "manuel2258/2258studio"
         registryCredential = "dockerhub"
     }
-    agent { docker { image 'jekyll/builder' } }
+    agent any
     stages {
-        stage('build site') {
+        stage('Build site') {
             steps {
                 checkout scm
-                sh 'bundle update'
-                sh 'bundle install'
-                sh 'bundle exec jekyll build'
             }
         }
-        stage('build docker image') {
+
+        stage('Build docker image') {
             steps {
                 script {
-                    docker.build registry + ":$BUILD_NUMBER"
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
+        }
+        stage('Deploy docker image') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
                 }
             }
         }
