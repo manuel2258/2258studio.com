@@ -8,7 +8,7 @@ pipeline {
         stage('build site') {
             steps {
                 checkout scm
-                sh 'jekyll build'
+                sh 'bundle exec jekyll build'
             }
         }
         stage('build docker image') {
