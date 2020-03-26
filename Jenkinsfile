@@ -9,6 +9,7 @@ pipeline {
             agent { docker { image 'jekyll/builder' } }
             steps {
                 checkout scm
+                sh 'bundle update'
                 sh 'bundle install'
                 sh 'bundle exec jekyll build'
             }
