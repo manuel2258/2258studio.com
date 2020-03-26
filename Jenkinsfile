@@ -1,7 +1,7 @@
 pipeline {
     environment {
-        registry = "gustavoapolinario/docker-test"
-        registryCredential = ‘dockerhub’
+        registry = "manuel2258/2258studio"
+        registryCredential = "dockerhub"
     }
     agent { docker { image 'jekyll/builder' } }
     stages {
@@ -13,7 +13,9 @@ pipeline {
         }
         stage('build docker image') {
             steps {
-                docker.build registry + ":$BUILD_NUMBER"
+                script {
+                    docker.build registry + ":$BUILD_NUMBER"
+                }
             }
         }
     }
