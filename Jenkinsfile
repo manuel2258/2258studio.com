@@ -1,15 +1,19 @@
 pipeline {
+    environment {
+        registry = "gustavoapolinario/docker-test"
+        registryCredential = ‘dockerhub’
+    }
     agent { docker { image 'jekyll/builder' } }
     stages {
-        stage('build') {
+        stage('build site') {
             steps {
+                checkout scm
                 sh 'jekyll build'
-                sh 'docker build -t manuel2258/jekyll .'
             }
         }
-        stage('deploy') {
+        stage('build docker image') {
             steps {
-                sh 'docker-compose up -d'
+                docker.build registry + ":$BUILD_NUMBER"
             }
         }
     }
