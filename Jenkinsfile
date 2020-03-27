@@ -5,12 +5,6 @@ pipeline {
     }
     agent any
     stages {
-        stage('Deploy docker image') {
-            agent any
-            steps {
-                sshPublisher(publishers: [sshPublisherDesc(configName: 'local', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'cd /home/manuel/docker; docker-compose up -d', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
-            }
-        }
         stage('Build site') {
             agent { docker { image 'jekyll/builder' } }
             steps {
@@ -36,6 +30,12 @@ pipeline {
                         dockerImage.push()
                     }
                 }
+            }
+        }
+        stage('Deploy docker image') {
+            agent any
+            steps {
+                sshPublisher(publishers: [sshPublisherDesc(configName: 'local', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'cd /home/manuel/docker; docker-compose up -d', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
             }
         }
     }

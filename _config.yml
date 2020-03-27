@@ -7,7 +7,7 @@ url: 2258studio.com
 
 # homepage tiles
 tiles-source: pages # accepts "posts" or "pages"
-tiles-count: 3
+tiles-count: 10
 
 # build settings
 markdown: kramdown
