@@ -8,7 +8,7 @@ pipeline {
         stage('Deploy docker image') {
             agent any
             steps {
-                sh 'ssh root@79.143.179.92 "cd /home/manuel/docker; docker-compose up -d;"'
+                sshPublisher(publishers: [sshPublisherDesc(configName: 'local', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'docker-compose up -d', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/home/manuel/docker', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
             }
         }
         stage('Build site') {
@@ -32,7 +32,7 @@ pipeline {
             agent any
             steps {
                 script {
-                    docker.withRegistry( '', registryCredential ) {
+                    docker.withRegistry('', registryCredential ) {
                         dockerImage.push()
                     }
                 }
