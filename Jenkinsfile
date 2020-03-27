@@ -5,10 +5,15 @@ pipeline {
     }
     agent any
     stages {
+        stage('Deploy docker image') {
+            agent any
+            steps {
+                sh 'ssh root@79.143.179.92 "cd /home/manuel/docker; docker-compose up -d;"'
+            }
+        }
         stage('Build site') {
             agent { docker { image 'jekyll/builder' } }
             steps {
-                checkout scm
                 sh 'bundle update'
                 sh 'bundle install'
                 sh 'bundle exec jekyll build'
@@ -23,7 +28,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy docker image') {
+        stage('Upload docker image') {
             agent any
             steps {
                 script {
