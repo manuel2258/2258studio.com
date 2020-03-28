@@ -22,7 +22,7 @@ pipeline {
                 }
             }
         }
-        stage('Upload docker image') {
+        /*stage('Upload docker image') {
             agent any
             steps {
                 script {
@@ -31,7 +31,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
         stage('Deploy docker image') {
             agent any
             steps {
