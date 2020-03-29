@@ -3,7 +3,7 @@ title: 2258Studio
 subtitle: by Manuel Schmidbauer
 email: manuel2258@protonmail.com
 baseurl: "" # the subpath of your site, e.g. /blog
-url: 2258studio.com
+url: https://2258studio.com
 
 # homepage tiles
 tiles-source: pages # accepts "posts" or "pages"
