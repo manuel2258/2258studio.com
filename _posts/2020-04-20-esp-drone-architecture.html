@@ -1,0 +1,44 @@
+---
+layout: post
+title: EspDrone Architecture
+categories: [esp-drone]
+permalink: /esp-drone/posts/architecture.html
+---
+
+<div class="inner">
+    <p>
+        <h4>How the EspDrone works: </h4>
+        The drones main part is already written and does in theory work. The drone and the remote communicate using the
+        default tcp/ip stack, while being connected over the ESP32 specific LongRange WiFi. That should theoretically
+        give us a communication range of over 1km. Although in praxis it will be shorter, its should still be sufficient
+        for our needs.
+        <h5>Communication: </h5>
+        As you probably can guess the communication is based on packages. Those will automatically be parsed into
+        classes based on its first byte. There are currently several packages that are planned to be used, but it
+        is easy to add new ones. The InputPackage is meant to be received regularly, like for example every 50ms.
+        The rest are to only be sent when needed, as they rather represent options. For example is the user changes a
+        rotation shift then the packages has to be sent from the remote controller to the drone.
+        <img src="{% link assets/images/esp-drone/packages.png %}" alt="EspDrone-Packages"
+            style="display: block; margin-left: auto; margin-right: auto; width: 50%;" />
+        Some theoretically additions could for example be a video stream from the drone to the remote controller or more
+        options.
+        <h5>Processing: </h5>
+        The packages aren't good for anything if their aren't processed. Of course the main goal is that each input
+        package produces an Output that can be applied to the motors. For that the drone uses a dynamic event system
+        that can easily be extended. Therefor each package will be converted into a Event and every EventReceiver will
+        be notified that a new event is available. Each EventReceiver can then again add another event based on the
+        received Event. For example the InputWatchdog. It makes sure that the communication is working correctly be
+        expecting a InputPackage every 100ms. If non is received in that time it will produce another Event that then
+        will result in the Drone shutting down its Motors.
+        <h5>Pipeline: </h5>
+        Another central EventReceiver is the Pipeline. Its job is to convert incoming InputPackages into an Motor
+        Output. That is again done rather dynamically. The Pipeline has several Processors that modify the input
+        package, convert the input into an motor output and then modify the motor output as well. Those Processors can
+        again be EventReceivers. So a rather minimal pipeline for example could be
+        Pipeline->InputShifter->DefaultConverter->PipelineOutput. The InputShifter then would receive RotationShift
+        Packages and Pipeline would receive InputPackages.
+        <h5>Conclusion</h5>
+        Although those systems were not yet tested in a real flight, I'm rather optimistic that it will work well.
+        You can of course always have a look at the implementation on github!
+    </p>
+</div>
